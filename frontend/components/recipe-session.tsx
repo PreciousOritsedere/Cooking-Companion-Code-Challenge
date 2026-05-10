@@ -18,6 +18,8 @@ import { CopilotSidebar } from "@copilotkit/react-ui";
 import "@copilotkit/react-ui/styles.css";
 
 import { RecipeView } from "./recipe-view";
+import { RecipeSkeleton } from "./recipe-skeleton";
+import { ErrorBoundary } from "./error-boundary";
 import { useToolRenderers } from "./tool-renders";
 import type { RecipeContext, UploadResponse } from "@/lib/types";
 
@@ -29,7 +31,9 @@ interface RecipeSessionProps {
 export function RecipeSession({ uploadData, onReset }: RecipeSessionProps) {
   return (
     <CopilotKit runtimeUrl="/api/copilotkit" agent="recipe_agent">
-      <RecipeSessionInner uploadData={uploadData} onReset={onReset} />
+      <ErrorBoundary fallbackMessage="The cooking session encountered an error. Try uploading the recipe again.">
+        <RecipeSessionInner uploadData={uploadData} onReset={onReset} />
+      </ErrorBoundary>
     </CopilotKit>
   );
 }
@@ -48,18 +52,20 @@ function RecipeSessionInner({ uploadData, onReset }: RecipeSessionProps) {
     initialState: uploadData.state,
   });
 
-  // Register tool renderers so agent actions appear as visual cards in chat
+  // Registering tool renderers so that agent actions appear as visual cards in chat
   useToolRenderers();
 
+  const isLoading = !state || !state.recipe;
+
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col animate-fade-in">
       {/* Top bar with recipe name and reset */}
       <nav
         className="sticky top-0 z-10 flex items-center justify-between border-b border-stone-200 bg-white/80 backdrop-blur-sm px-5 py-3"
         aria-label="Session controls"
       >
         <h1 className="text-lg font-semibold text-stone-800 truncate">
-          {state.recipe?.title ?? "Cooking Companion"}
+          {state?.recipe?.title ?? "Cooking Companion"}
         </h1>
         <button
           type="button"
@@ -73,7 +79,7 @@ function RecipeSessionInner({ uploadData, onReset }: RecipeSessionProps) {
 
       {/* Recipe content — fills available space */}
       <main id="main-content" className="flex-1" aria-live="polite">
-        <RecipeView state={state} />
+        {isLoading ? <RecipeSkeleton /> : <RecipeView state={state} />}
       </main>
 
       {/* Chat sidebar — CopilotKit pre-built UI */}
@@ -82,7 +88,8 @@ function RecipeSessionInner({ uploadData, onReset }: RecipeSessionProps) {
         clickOutsideToClose={false}
         labels={{
           title: "Cooking Assistant",
-          initial: "Hi! I can help you scale the recipe, swap ingredients, or guide you through the steps. What would you like to do?",
+          initial:
+            "Hi! I can help you scale the recipe, swap ingredients, or guide you through the steps. What would you like to do?",
           placeholder: "Ask me anything about the recipe...",
         }}
       />
