@@ -6,7 +6,8 @@ import {
   ExclamationTriangleIcon,
   LightBulbIcon,
 } from "@heroicons/react/24/outline";
-import { PlayIcon } from "@heroicons/react/24/solid";
+import { CheckIcon, PlayIcon } from "@heroicons/react/24/solid";
+import { useEffect, useRef } from "react";
 
 interface StepListProps {
   steps: RecipeStep[];
@@ -15,16 +16,48 @@ interface StepListProps {
 }
 
 /**
- * Vertical step list with active-step highlighting.
+ * Vertical step list with active-step highlighting and auto-scroll.
  * Steps show timing, attention warnings, and tips.
  * Current step is visually prominent — glanceable from arm's length.
+ * Progress bar shows how far through the recipe you are.
  */
 export function StepList({ steps, currentStep, cookingStarted }: StepListProps) {
+  const activeRef = useRef<HTMLLIElement>(null);
+
+  // Auto-scroll to the active step when it changes
+  useEffect(() => {
+    if (cookingStarted && activeRef.current) {
+      activeRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [currentStep, cookingStarted]);
+
+  const progress = cookingStarted
+    ? Math.round((currentStep / steps.length) * 100)
+    : 0;
+
   return (
     <section aria-label="Cooking steps">
-      <h2 className="text-xl font-semibold text-stone-800 mb-4">
-        Steps
-      </h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold text-stone-800">Steps</h2>
+
+        {/* Progress indicator — visible once cooking starts */}
+        {cookingStarted && (
+          <div className="flex items-center gap-3" role="status" aria-label={`Cooking progress: ${progress}%`}>
+            <span className="text-sm font-medium text-stone-500">
+              {currentStep}/{steps.length}
+            </span>
+            <div className="w-24 h-2 rounded-full bg-stone-200 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-amber-500 transition-all duration-500 ease-out"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        )}
+      </div>
 
       <ol className="space-y-3">
         {steps.map((step, index) => {
@@ -40,24 +73,25 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
           return (
             <li
               key={step.step_number}
+              ref={isActive ? activeRef : undefined}
               className={`
                 relative rounded-2xl px-5 py-4 transition-all duration-300
                 ${isActive
                   ? "bg-amber-50 ring-2 ring-amber-400 shadow-sm"
                   : isDone
-                    ? "bg-emerald-50/50 opacity-60"
+                    ? "bg-emerald-50/50"
                     : "bg-white"
                 }
               `}
               aria-current={isActive ? "step" : undefined}
               aria-label={`Step ${step.step_number}: ${statusLabel}`}
             >
-              {/* Step number + instruction */}
               <div className="flex gap-4">
+                {/* Step number badge */}
                 <div
                   className={`
                     w-8 h-8 rounded-full flex items-center justify-center shrink-0
-                    text-sm font-bold
+                    text-sm font-bold transition-colors duration-300
                     ${isActive
                       ? "bg-amber-500 text-white"
                       : isDone
@@ -67,13 +101,21 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
                   `}
                   aria-hidden="true"
                 >
-                  {isDone ? "✓" : step.step_number}
+                  {isDone ? (
+                    <CheckIcon className="w-4 h-4" />
+                  ) : (
+                    step.step_number
+                  )}
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <p
-                    className={`text-base leading-relaxed ${
-                      isActive ? "text-stone-900 font-medium" : "text-stone-700"
+                    className={`text-base leading-relaxed transition-colors duration-300 ${
+                      isDone
+                        ? "text-stone-400"
+                        : isActive
+                          ? "text-stone-900 font-medium"
+                          : "text-stone-700"
                     }`}
                   >
                     {step.instruction}
@@ -103,14 +145,8 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
                     )}
 
                     {step.requires_attention && (
-                      <span
-                        className="inline-flex items-center gap-1 text-sm text-orange-600"
-                        role="alert"
-                      >
-                        <ExclamationTriangleIcon
-                          className="w-4 h-4"
-                          aria-hidden="true"
-                        />
+                      <span className="inline-flex items-center gap-1 text-sm text-orange-600" role="alert">
+                        <ExclamationTriangleIcon className="w-4 h-4" aria-hidden="true" />
                         <span>Needs attention</span>
                       </span>
                     )}

@@ -7,6 +7,7 @@ import {
   FireIcon,
   GlobeAltIcon,
 } from "@heroicons/react/24/outline";
+import { useEffect, useRef, useState } from "react";
 
 interface RecipeHeaderProps {
   recipe: Recipe;
@@ -22,6 +23,19 @@ export function RecipeHeader({ recipe }: RecipeHeaderProps) {
   const difficulty = difficultyConfig[recipe.difficulty];
   const totalTime =
     (recipe.prep_time_minutes ?? 0) + (recipe.cook_time_minutes ?? 0);
+
+  // Detect servings changes and flash the servings badge
+  const prevServingsRef = useRef(recipe.servings);
+  const [servingsChanged, setServingsChanged] = useState(false);
+
+  useEffect(() => {
+    if (prevServingsRef.current !== recipe.servings) {
+      setServingsChanged(true);
+      prevServingsRef.current = recipe.servings;
+      const timer = setTimeout(() => setServingsChanged(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [recipe.servings]);
 
   return (
     <header aria-label={`${recipe.title} — recipe overview`}>
@@ -47,11 +61,14 @@ export function RecipeHeader({ recipe }: RecipeHeaderProps) {
       )}
 
       {/* Meta — semantic description list for screen readers */}
-      <dl
-        className="flex flex-wrap gap-4 text-base text-stone-600"
-        aria-label="Recipe details"
-      >
-        <div className="flex items-center gap-2">
+      <dl className="flex flex-wrap gap-4 text-base text-stone-600" aria-label="Recipe details">
+        <div
+          className={`flex items-center gap-2 rounded-lg px-3 py-1.5 transition-all duration-500 ${
+            servingsChanged
+              ? "bg-amber-100 ring-2 ring-amber-400 scale-105"
+              : "bg-transparent"
+          }`}
+        >
           <UserGroupIcon className="w-5 h-5 text-stone-400" aria-hidden="true" />
           <dt className="sr-only">Servings</dt>
           <dd>
@@ -66,7 +83,7 @@ export function RecipeHeader({ recipe }: RecipeHeaderProps) {
         </div>
 
         {totalTime > 0 && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-3 py-1.5">
             <ClockIcon className="w-5 h-5 text-stone-400" aria-hidden="true" />
             <dt className="sr-only">Time</dt>
             <dd>
@@ -89,7 +106,7 @@ export function RecipeHeader({ recipe }: RecipeHeaderProps) {
         )}
 
         {recipe.cuisine && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-3 py-1.5">
             <GlobeAltIcon className="w-5 h-5 text-stone-400" aria-hidden="true" />
             <dt className="sr-only">Cuisine</dt>
             <dd>{recipe.cuisine}</dd>
@@ -97,7 +114,7 @@ export function RecipeHeader({ recipe }: RecipeHeaderProps) {
         )}
 
         {recipe.dietary_tags.length > 0 && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-3 py-1.5">
             <FireIcon className="w-5 h-5 text-stone-400" aria-hidden="true" />
             <dt className="sr-only">Dietary</dt>
             <dd>{recipe.dietary_tags.join(", ")}</dd>

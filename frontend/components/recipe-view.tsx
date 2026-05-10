@@ -4,6 +4,7 @@ import type { RecipeContext } from "@/lib/types";
 import { RecipeHeader } from "./recipe-header";
 import { IngredientList } from "./ingredient-list";
 import { StepList } from "./step-list";
+import { FireIcon } from "@heroicons/react/24/solid";
 
 interface RecipeViewProps {
   state: RecipeContext;
@@ -16,6 +17,8 @@ interface RecipeViewProps {
  * - On tablets/desktop (md+): single scrollable column inside the left panel.
  *   Ingredients and steps sit side by side when there's room (lg+).
  * - On phones: stacked vertically, full width.
+ *
+ * Shows a "cooking mode" banner once the user starts stepping through.
  */
 export function RecipeView({ state }: RecipeViewProps) {
   const { recipe, current_step, checked_ingredients, cooking_started } = state;
@@ -37,6 +40,23 @@ export function RecipeView({ state }: RecipeViewProps) {
       className="h-full overflow-y-auto p-5 sm:p-6 lg:p-8 space-y-6"
       aria-label={`Recipe: ${recipe.title}`}
     >
+      {/* Cooking mode indicator */}
+      {cooking_started && (
+        <div
+          className="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-4 py-2 text-sm text-amber-800"
+          role="status"
+          aria-live="polite"
+        >
+          <FireIcon className="w-5 h-5 text-amber-500 animate-pulse" aria-hidden="true" />
+          <span className="font-medium">
+            Cooking mode — step {current_step + 1} of {recipe.steps.length}
+          </span>
+          <span className="text-amber-600 ml-1">
+            Ask the assistant to move to the next step when you're ready.
+          </span>
+        </div>
+      )}
+
       <RecipeHeader recipe={recipe} />
 
       {/*
