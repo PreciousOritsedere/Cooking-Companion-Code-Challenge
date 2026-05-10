@@ -2,24 +2,31 @@
 
 import { useState } from "react";
 import { UploadZone } from "@/components/upload-zone";
+import { RecipeView } from "@/components/recipe-view";
 import type { UploadResponse } from "@/lib/types";
 
 export default function Home() {
   const [uploadData, setUploadData] = useState<UploadResponse | null>(null);
 
   if (uploadData) {
-    // TODO: Step 3 — render the recipe view + chat
+    // TODO: Step 4 — wrap with CopilotKit and add chat panel
     return (
-      <main className="flex min-h-screen items-center justify-center p-6">
-        <p className="text-lg text-stone-600">
-          Recipe loaded: <strong>{uploadData.state.recipe?.title}</strong>
-        </p>
+      <main
+        id="main-content"
+        className="flex min-h-screen flex-col"
+        aria-live="polite"
+      >
+        <RecipeView state={uploadData.state} />
       </main>
     );
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-6">
+    <main
+      id="main-content"
+      className="flex min-h-screen flex-col items-center justify-center gap-8 p-6"
+      aria-live="polite"
+    >
       {/* Branding */}
       <div className="text-center">
         <h1 className="text-4xl font-bold tracking-tight text-stone-800 sm:text-5xl">
