@@ -34,8 +34,14 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
     }
   }, [currentStep, cookingStarted]);
 
+  // The backend can't set currentStep beyond steps.length - 1,
+  // so "all done" means we're on the last step and the agent confirmed completion.
+  // We track this: once the user reaches the last step, we show it as the final active step.
+  // When currentStep equals the last index, the progress bar shows full.
+  const isOnLastStep = cookingStarted && currentStep === steps.length - 1;
+  const allDone = cookingStarted && currentStep >= steps.length;
   const progress = cookingStarted
-    ? Math.round((currentStep / steps.length) * 100)
+    ? Math.round(((currentStep + (isOnLastStep ? 1 : 0)) / steps.length) * 100)
     : 0;
 
   return (
@@ -47,7 +53,7 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
         {cookingStarted && (
           <div className="flex items-center gap-3" role="status" aria-label={`Cooking progress: ${progress}%`}>
             <span className="text-sm font-medium text-stone-500">
-              {currentStep}/{steps.length}
+              {isOnLastStep ? steps.length : currentStep}/{steps.length}
             </span>
             <div className="w-24 h-2 rounded-full bg-stone-200 overflow-hidden">
               <div
@@ -59,10 +65,20 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
         )}
       </div>
 
+      {isOnLastStep && (
+        <div
+          className="mb-4 flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-2 text-sm text-emerald-800"
+          role="status"
+        >
+          <CheckIcon className="w-5 h-5 text-emerald-500" aria-hidden="true" />
+          <span className="font-medium">All steps complete — enjoy your meal!</span>
+        </div>
+      )}
+
       <ol className="space-y-3">
         {steps.map((step, index) => {
-          const isActive = cookingStarted && index === currentStep;
-          const isDone = cookingStarted && index < currentStep;
+          const isActive = cookingStarted && !allDone && !isOnLastStep && index === currentStep;
+          const isDone = cookingStarted && (allDone || isOnLastStep || index < currentStep);
 
           const statusLabel = isDone
             ? "Completed"

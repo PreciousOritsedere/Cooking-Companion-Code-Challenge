@@ -24,11 +24,16 @@ export function RecipeHeader({ recipe }: RecipeHeaderProps) {
   const totalTime =
     (recipe.prep_time_minutes ?? 0) + (recipe.cook_time_minutes ?? 0);
 
-  // Detect servings changes and flash the servings badge
-  const prevServingsRef = useRef(recipe.servings);
+  // Detect servings changes and flash the servings badge.
+  // Skip the initial render by starting with null.
+  const prevServingsRef = useRef<number | null>(null);
   const [servingsChanged, setServingsChanged] = useState(false);
 
   useEffect(() => {
+    if (prevServingsRef.current === null) {
+      prevServingsRef.current = recipe.servings;
+      return;
+    }
     if (prevServingsRef.current !== recipe.servings) {
       setServingsChanged(true);
       prevServingsRef.current = recipe.servings;
