@@ -20,6 +20,7 @@ import "@copilotkit/react-ui/styles.css";
 import { RecipeView } from "./recipe-view";
 import { RecipeSkeleton } from "./recipe-skeleton";
 import { ErrorBoundary } from "./error-boundary";
+import { VoiceButton } from "./voice-button";
 import { useToolRenderers } from "./tool-renders";
 import type { RecipeContext, UploadResponse } from "@/lib/types";
 
@@ -81,6 +82,9 @@ function RecipeSessionInner({ uploadData, onReset }: RecipeSessionProps) {
       <main id="main-content" className="flex-1" aria-live="polite">
         {isLoading ? <RecipeSkeleton /> : <RecipeView state={state} />}
       </main>
+
+      {/* Voice input — floating mic button for hands-free use */}
+      <VoiceButton />
 
       {/* Chat sidebar — CopilotKit pre-built UI */}
       <CopilotSidebar
