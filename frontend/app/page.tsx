@@ -2,22 +2,18 @@
 
 import { useState } from "react";
 import { UploadZone } from "@/components/upload-zone";
-import { RecipeView } from "@/components/recipe-view";
+import { RecipeSession } from "@/components/recipe-session";
 import type { UploadResponse } from "@/lib/types";
 
 export default function Home() {
   const [uploadData, setUploadData] = useState<UploadResponse | null>(null);
 
   if (uploadData) {
-    // TODO: Step 4 — wrap with CopilotKit and add chat panel
     return (
-      <main
-        id="main-content"
-        className="flex min-h-screen flex-col"
-        aria-live="polite"
-      >
-        <RecipeView state={uploadData.state} />
-      </main>
+      <RecipeSession
+        uploadData={uploadData}
+        onReset={() => setUploadData(null)}
+      />
     );
   }
 
