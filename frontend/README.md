@@ -55,6 +55,7 @@ frontend/
 │   ├── step-timer.tsx        # Circular countdown timer for active cooking steps
 │   ├── confetti.tsx          # Canvas-based celebration animation on recipe completion
 │   ├── gesture-hint.tsx      # One-time onboarding tooltip for swipe gestures
+│   ├── onboarding-tour.tsx   # First-time guided walkthrough (react-joyride)
 │   ├── voice-button.tsx      # Floating mic button for voice input
 │   ├── tool-renders.tsx      # Chat suggestions for agent tool calls
 │   ├── recipe-skeleton.tsx   # Loading placeholder (shimmer)
@@ -89,6 +90,9 @@ frontend/
 - **Gesture hint** — dismissable one-time onboarding tooltip explaining swipe navigation.
 - **Responsive sizing** — smaller text, padding, and badges on mobile. Chat popup capped at 55vh.
 
+### Onboarding
+- **Guided tour** — first-time users get an 8-step spotlight walkthrough (react-joyride) covering the recipe overview, servings adjuster, ingredient swaps, tab switcher, cooking steps, start cooking, AI chat button, and voice input. Auto-switches tabs during the tour so the correct panel is visible. Dismissable with "Skip tour" and remembered in localStorage.
+
 ### Hands-free
 - **Voice input** — floating mic button uses the Web Speech API to dictate messages to the chat agent. Ideal for messy hands in the kitchen.
 
@@ -107,6 +111,7 @@ frontend/
 | **Native touch events for swipe** | `PointerEvent` had reliability issues on scrollable containers. Native `touchstart`/`touchend` with `passive: true` listeners work consistently without blocking scroll. |
 | **DOM-based chat submission** | CopilotKit's programmatic message API is a premium feature. The `submitToCopilotChat` utility interacts with the controlled textarea via DOM to keep the open-source tier. |
 | **No external state library** | CopilotKit's `useCoAgent` handles shared state. Local UI state with `useState` where needed. No Redux, Zustand, or similar — keeps the dependency tree small. |
+| **Onboarding tour (react-joyride)** | A kitchen cook won't read a README. A 5-step spotlight tour teaches the key interactions on first use, then stays out of the way. |
 | **Error boundary + skeleton** | Resilient UX — never a blank screen. Skeleton shimmer during loading, boundary catches render crashes. |
 
 ## Accessibility
@@ -127,6 +132,7 @@ frontend/
 - CopilotKit (react-core, react-ui, runtime)
 - AG-UI client
 - Heroicons
+- react-joyride (onboarding tour)
 - Web Speech API (voice input)
 
 ## Scripts

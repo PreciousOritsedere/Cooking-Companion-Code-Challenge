@@ -21,6 +21,7 @@ import { RecipeView } from "./recipe-view";
 import { RecipeSkeleton } from "./recipe-skeleton";
 import { ErrorBoundary } from "./error-boundary";
 import { VoiceButton } from "./voice-button";
+import { OnboardingTour } from "./onboarding-tour";
 import { useToolRenderers } from "./tool-renders";
 import type { RecipeContext, UploadResponse } from "@/lib/types";
 
@@ -95,6 +96,9 @@ function RecipeSessionInner({ uploadData, onReset }: RecipeSessionProps) {
 
         {/* Voice input — floating mic button for hands-free use */}
         <VoiceButton />
+
+        {/* First-time onboarding tour */}
+        {!isLoading && <OnboardingTour />}
       </div>
     </CopilotPopup>
   );

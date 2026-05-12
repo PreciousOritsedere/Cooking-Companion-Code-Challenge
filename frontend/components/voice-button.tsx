@@ -38,7 +38,7 @@ export function VoiceButton() {
   if (!isSupported) return null;
 
   return (
-    <div className="fixed bottom-6 left-6 z-50 flex flex-col items-center gap-2">
+    <div data-tour="voice-btn" className="fixed bottom-6 left-6 z-50 flex flex-col items-center gap-2">
       {/* Error tooltip */}
       {error && (
         <div

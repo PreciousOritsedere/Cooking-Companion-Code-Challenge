@@ -69,7 +69,7 @@ export function RecipeHeader({ recipe, onScale, onStartCooking, cookingStarted }
   }, [recipe.servings]);
 
   return (
-    <header aria-label={`${recipe.title} — recipe overview`}>
+    <header aria-label={`${recipe.title} — recipe overview`} data-tour="recipe-header">
       {/* Title + difficulty badge + start cooking */}
       <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
         <h1 className="text-2xl font-bold tracking-tight text-brand sm:text-3xl lg:text-4xl">
@@ -87,6 +87,7 @@ export function RecipeHeader({ recipe, onScale, onStartCooking, cookingStarted }
           <button
             type="button"
             onClick={onStartCooking}
+            data-tour="start-cooking"
             className="hidden lg:flex ml-auto items-center gap-2 rounded-xl bg-brand-blue px-5 py-2.5 text-white font-semibold shadow-md hover:bg-brand hover:shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50"
           >
             <PlayIcon className="w-5 h-5" aria-hidden="true" />
@@ -103,6 +104,7 @@ export function RecipeHeader({ recipe, onScale, onStartCooking, cookingStarted }
 
       <dl className="flex flex-wrap gap-2 sm:gap-4 text-sm sm:text-base text-slate-600" aria-label="Recipe details">
         <div
+          data-tour="servings"
           className={`flex items-center gap-2 rounded-lg px-3 py-1.5 transition-all duration-500 ${
             servingsChanged
               ? "bg-brand-light ring-2 ring-brand-cyan scale-105"
@@ -208,6 +210,7 @@ export function RecipeHeader({ recipe, onScale, onStartCooking, cookingStarted }
         <button
           type="button"
           onClick={onStartCooking}
+          data-tour="start-cooking"
           className="lg:hidden mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-blue px-5 py-2.5 text-white font-semibold shadow-md hover:bg-brand hover:shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50"
         >
           <PlayIcon className="w-5 h-5" aria-hidden="true" />

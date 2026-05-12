@@ -132,7 +132,7 @@ export function RecipeView({ state }: RecipeViewProps) {
       {/* Tabs for mobile/tablet, two-column grid on desktop */}
       <div ref={swipeRef} className="flex-1 min-h-0 flex flex-col lg:grid lg:grid-cols-[minmax(280px,1fr)_2fr] lg:gap-6 px-4 sm:px-6 lg:px-8 pb-6">
         {/* Tab bar — visible on mobile/tablet only */}
-        <div className="lg:hidden flex border-b border-slate-200 mb-3 shrink-0">
+        <div data-tour="tabs" className="lg:hidden flex border-b border-slate-200 mb-3 shrink-0">
           <button
             type="button"
             onClick={() => setActiveTab("ingredients")}
@@ -158,7 +158,7 @@ export function RecipeView({ state }: RecipeViewProps) {
         </div>
 
         {/* Ingredients panel */}
-        <div className={`overflow-y-auto px-1 pr-2 pb-4 lg:border-r lg:border-slate-100 ${activeTab === "ingredients" ? "block" : "hidden"} lg:block`}>
+        <div data-tour="ingredients" className={`overflow-y-auto px-1 pr-2 pb-4 lg:border-r lg:border-slate-100 ${activeTab === "ingredients" ? "block" : "hidden"} lg:block`}>
           <IngredientList
             ingredients={recipe.ingredients}
             checkedIngredients={checked_ingredients}
@@ -167,7 +167,7 @@ export function RecipeView({ state }: RecipeViewProps) {
         </div>
 
         {/* Steps panel */}
-        <div className={`overflow-y-auto px-1 lg:pl-2 pb-4 ${activeTab === "steps" ? "block" : "hidden"} lg:block`}>
+        <div data-tour="steps" className={`overflow-y-auto px-1 lg:pl-2 pb-4 ${activeTab === "steps" ? "block" : "hidden"} lg:block`}>
           <StepList
             steps={recipe.steps}
             currentStep={current_step}
