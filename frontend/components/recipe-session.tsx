@@ -14,7 +14,7 @@
 
 import { CopilotKit } from "@copilotkit/react-core";
 import { useCoAgent } from "@copilotkit/react-core";
-import { CopilotSidebar } from "@copilotkit/react-ui";
+import { CopilotPopup } from "@copilotkit/react-ui";
 import "@copilotkit/react-ui/styles.css";
 
 import { RecipeView } from "./recipe-view";
@@ -59,9 +59,9 @@ function RecipeSessionInner({ uploadData, onReset }: RecipeSessionProps) {
   const isLoading = !state || !state.recipe;
 
   return (
-    <CopilotSidebar
-      defaultOpen={true}
-      clickOutsideToClose={false}
+    <CopilotPopup
+      defaultOpen={false}
+      clickOutsideToClose={true}
       labels={{
         title: "Cooking Assistant",
         initial:
@@ -96,6 +96,6 @@ function RecipeSessionInner({ uploadData, onReset }: RecipeSessionProps) {
         {/* Voice input — floating mic button for hands-free use */}
         <VoiceButton />
       </div>
-    </CopilotSidebar>
+    </CopilotPopup>
   );
 }

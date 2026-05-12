@@ -90,24 +90,10 @@ body {
 .delay-200 { animation-delay: 200ms; }
 .delay-300 { animation-delay: 300ms; }
 
-/* CopilotKit sidebar overrides — Indegene brand theme */
-.copilotKitSidebar {
+/* CopilotKit popup overrides — Indegene brand theme */
+.copilotKitPopup {
   --copilot-kit-primary-color: var(--brand-blue) !important;
   --copilot-kit-background-color: var(--background) !important;
-}
-
-/* Sidebar width constraints */
-@media (min-width: 1024px) {
-  .copilotKitSidebar {
-    max-width: 380px;
-  }
-}
-
-@media (max-width: 640px) {
-  .copilotKitSidebar {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
 }
 
 /* Focus ring consistency */

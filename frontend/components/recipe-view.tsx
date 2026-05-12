@@ -10,7 +10,7 @@ import { IngredientList } from "./ingredient-list";
 import { StepList } from "./step-list";
 import { Confetti } from "./confetti";
 import { GestureHint } from "./gesture-hint";
-import { FireIcon } from "@heroicons/react/24/solid";
+import { FireIcon, PlayIcon } from "@heroicons/react/24/solid";
 
 interface RecipeViewProps {
   state: RecipeContext;
@@ -31,6 +31,16 @@ export function RecipeView({ state }: RecipeViewProps) {
   const handleSwap = useCallback((ingredientName: string) => {
     setOpen(true);
     submitToCopilotChat(`Suggest a substitute for ${ingredientName}`);
+  }, [setOpen]);
+
+  const handleStartCooking = useCallback(() => {
+    setOpen(true);
+    submitToCopilotChat("Start cooking — guide me through the steps");
+  }, [setOpen]);
+
+  const handleScale = useCallback((newServings: number) => {
+    setOpen(true);
+    submitToCopilotChat(`Scale this recipe to ${newServings} servings`);
   }, [setOpen]);
 
   const handleSwipeLeft = useCallback(() => {
@@ -108,7 +118,19 @@ export function RecipeView({ state }: RecipeViewProps) {
           </div>
         )}
 
-        <RecipeHeader recipe={recipe} />
+        <RecipeHeader recipe={recipe} onScale={handleScale} />
+
+        {/* Start cooking CTA — shown before cooking begins */}
+        {!cooking_started && (
+          <button
+            type="button"
+            onClick={handleStartCooking}
+            className="flex items-center gap-2 w-full sm:w-auto rounded-xl bg-brand-blue px-6 py-3 text-white font-semibold shadow-md hover:bg-brand hover:shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50"
+          >
+            <PlayIcon className="w-5 h-5" aria-hidden="true" />
+            Start Cooking
+          </button>
+        )}
       </div>
 
       {/* Scrollable body — two columns on lg, stacked on mobile */}
