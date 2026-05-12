@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { RecipeContext } from "@/lib/types";
 import { submitToCopilotChat } from "@/lib/chat-utils";
 import { useChatContext } from "@copilotkit/react-ui";
@@ -10,7 +10,7 @@ import { IngredientList } from "./ingredient-list";
 import { StepList } from "./step-list";
 import { Confetti } from "./confetti";
 import { GestureHint } from "./gesture-hint";
-import { FireIcon, PlayIcon } from "@heroicons/react/24/solid";
+import { FireIcon } from "@heroicons/react/24/solid";
 
 interface RecipeViewProps {
   state: RecipeContext;
@@ -27,6 +27,9 @@ interface RecipeViewProps {
 export function RecipeView({ state }: RecipeViewProps) {
   const { recipe, current_step, checked_ingredients, cooking_started } = state;
   const { setOpen } = useChatContext();
+  const [activeTab, setActiveTab] = useState<"ingredients" | "steps">(
+    cooking_started ? "steps" : "ingredients"
+  );
 
   const handleSwap = useCallback((ingredientName: string) => {
     setOpen(true);
@@ -82,7 +85,7 @@ export function RecipeView({ state }: RecipeViewProps) {
     >
       <Confetti active={isComplete} />
       {/* Fixed header area — doesn't scroll */}
-      <div className="shrink-0 p-5 sm:p-6 lg:px-8 lg:pt-6 lg:pb-4 space-y-4">
+      <div className="shrink-0 px-4 py-3 sm:p-6 lg:px-8 lg:pt-6 lg:pb-4 space-y-3 sm:space-y-4">
         {cooking_started && (
           <div
             className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm ${
@@ -118,34 +121,53 @@ export function RecipeView({ state }: RecipeViewProps) {
           </div>
         )}
 
-        <RecipeHeader recipe={recipe} onScale={handleScale} />
-
-        {/* Start cooking CTA — shown before cooking begins */}
-        {!cooking_started && (
-          <button
-            type="button"
-            onClick={handleStartCooking}
-            className="flex items-center gap-2 w-full sm:w-auto rounded-xl bg-brand-blue px-6 py-3 text-white font-semibold shadow-md hover:bg-brand hover:shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50"
-          >
-            <PlayIcon className="w-5 h-5" aria-hidden="true" />
-            Start Cooking
-          </button>
-        )}
+        <RecipeHeader
+          recipe={recipe}
+          onScale={handleScale}
+          onStartCooking={handleStartCooking}
+          cookingStarted={cooking_started}
+        />
       </div>
 
-      {/* Scrollable body — two columns on lg, stacked on mobile */}
-      <div
-        ref={swipeRef}
-        className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[minmax(280px,1fr)_2fr] gap-0 lg:gap-6 px-5 sm:px-6 lg:px-8 pb-6"
-      >
-        <div className="overflow-y-auto pr-2 pb-4 lg:border-r lg:border-slate-100">
+      {/* Tabs for mobile/tablet, two-column grid on desktop */}
+      <div ref={swipeRef} className="flex-1 min-h-0 flex flex-col lg:grid lg:grid-cols-[minmax(280px,1fr)_2fr] lg:gap-6 px-4 sm:px-6 lg:px-8 pb-6">
+        {/* Tab bar — visible on mobile/tablet only */}
+        <div className="lg:hidden flex border-b border-slate-200 mb-3 shrink-0">
+          <button
+            type="button"
+            onClick={() => setActiveTab("ingredients")}
+            className={`flex-1 py-2.5 text-sm font-semibold text-center transition-colors ${
+              activeTab === "ingredients"
+                ? "text-brand-blue border-b-2 border-brand-blue"
+                : "text-slate-400"
+            }`}
+          >
+            Ingredients
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("steps")}
+            className={`flex-1 py-2.5 text-sm font-semibold text-center transition-colors ${
+              activeTab === "steps"
+                ? "text-brand-blue border-b-2 border-brand-blue"
+                : "text-slate-400"
+            }`}
+          >
+            Steps
+          </button>
+        </div>
+
+        {/* Ingredients panel */}
+        <div className={`overflow-y-auto px-1 pr-2 pb-4 lg:border-r lg:border-slate-100 ${activeTab === "ingredients" ? "block" : "hidden"} lg:block`}>
           <IngredientList
             ingredients={recipe.ingredients}
             checkedIngredients={checked_ingredients}
             onSwap={handleSwap}
           />
         </div>
-        <div className="overflow-y-auto pl-0 lg:pl-2 pb-4">
+
+        {/* Steps panel */}
+        <div className={`overflow-y-auto px-1 lg:pl-2 pb-4 ${activeTab === "steps" ? "block" : "hidden"} lg:block`}>
           <StepList
             steps={recipe.steps}
             currentStep={current_step}

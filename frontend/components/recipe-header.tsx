@@ -9,11 +9,14 @@ import {
   MinusIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
+import { PlayIcon } from "@heroicons/react/24/solid";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 
 interface RecipeHeaderProps {
   recipe: Recipe;
   onScale?: (newServings: number) => void;
+  onStartCooking?: () => void;
+  cookingStarted?: boolean;
 }
 
 const difficultyConfig = {
@@ -22,7 +25,7 @@ const difficultyConfig = {
   hard: { label: "Hard", colour: "bg-brand-pink/10 text-brand-pink" },
 } as const;
 
-export function RecipeHeader({ recipe, onScale }: RecipeHeaderProps) {
+export function RecipeHeader({ recipe, onScale, onStartCooking, cookingStarted }: RecipeHeaderProps) {
   const difficulty = difficultyConfig[recipe.difficulty];
   const totalTime =
     (recipe.prep_time_minutes ?? 0) + (recipe.cook_time_minutes ?? 0);
@@ -67,27 +70,38 @@ export function RecipeHeader({ recipe, onScale }: RecipeHeaderProps) {
 
   return (
     <header aria-label={`${recipe.title} — recipe overview`}>
-      {/* Title + difficulty badge */}
-      <div className="flex flex-wrap items-start gap-3 mb-4">
-        <h1 className="text-3xl font-bold tracking-tight text-brand sm:text-4xl">
+      {/* Title + difficulty badge + start cooking */}
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+        <h1 className="text-2xl font-bold tracking-tight text-brand sm:text-3xl lg:text-4xl">
           {recipe.title}
         </h1>
         <span
-          className={`mt-1 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${difficulty.colour}`}
+          className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${difficulty.colour}`}
           role="status"
           aria-label={`Difficulty: ${difficulty.label}`}
         >
           {difficulty.label}
         </span>
+
+        {onStartCooking && !cookingStarted && (
+          <button
+            type="button"
+            onClick={onStartCooking}
+            className="hidden lg:flex ml-auto items-center gap-2 rounded-xl bg-brand-blue px-5 py-2.5 text-white font-semibold shadow-md hover:bg-brand hover:shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50"
+          >
+            <PlayIcon className="w-5 h-5" aria-hidden="true" />
+            Start Cooking
+          </button>
+        )}
       </div>
 
       {recipe.description && (
-        <p className="text-lg text-slate-600 max-w-2xl mb-4">
+        <p className="hidden sm:block text-lg text-slate-600 max-w-2xl mb-4">
           {recipe.description}
         </p>
       )}
 
-      <dl className="flex flex-wrap gap-4 text-base text-slate-600" aria-label="Recipe details">
+      <dl className="flex flex-wrap gap-2 sm:gap-4 text-sm sm:text-base text-slate-600" aria-label="Recipe details">
         <div
           className={`flex items-center gap-2 rounded-lg px-3 py-1.5 transition-all duration-500 ${
             servingsChanged
@@ -189,6 +203,17 @@ export function RecipeHeader({ recipe, onScale }: RecipeHeaderProps) {
           </div>
         )}
       </dl>
+
+      {onStartCooking && !cookingStarted && (
+        <button
+          type="button"
+          onClick={onStartCooking}
+          className="lg:hidden mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-blue px-5 py-2.5 text-white font-semibold shadow-md hover:bg-brand hover:shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50"
+        >
+          <PlayIcon className="w-5 h-5" aria-hidden="true" />
+          Start Cooking
+        </button>
+      )}
     </header>
   );
 }

@@ -120,7 +120,7 @@ export function IngredientList({
               {categoryLabels[category]}
             </h3>
 
-            <ul className="space-y-1.5">
+            <ul className="space-y-2.5">
               {items.map((ing) => {
                 const checked = localChecked.has(ing.name);
                 const justChanged = changedNames.has(ing.name);
@@ -129,12 +129,12 @@ export function IngredientList({
                   <li key={ing.name} className="group">
                     <div
                       className={`
-                        flex items-center gap-2 rounded-xl transition-all duration-300
+                        flex items-center gap-2 rounded-xl border-2 transition-all duration-300
                         ${justChanged
-                          ? "bg-brand-light ring-2 ring-brand-cyan scale-[1.01] shadow-sm"
+                          ? "bg-brand-light border-brand-cyan shadow-sm"
                           : checked
-                            ? "bg-emerald-50"
-                            : "bg-white border border-slate-100 hover:border-brand-cyan/40 hover:shadow-sm"
+                            ? "bg-emerald-50 border-emerald-200"
+                            : "border-slate-100 bg-white hover:border-brand-cyan/40 hover:shadow-sm"
                         }
                       `}
                     >
@@ -143,10 +143,10 @@ export function IngredientList({
                         onClick={() => toggle(ing.name)}
                         aria-pressed={checked}
                         aria-label={`${checked ? "Uncheck" : "Check"} ${formatQuantity(ing)}`}
-                        className="flex-1 flex items-center gap-3 px-4 py-3 text-left text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50 rounded-l-xl"
+                        className="flex-1 flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 text-left text-sm sm:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50 rounded-l-xl"
                       >
                         <CheckCircleIcon
-                          className={`w-5 h-5 shrink-0 transition-colors duration-200 ${
+                          className={`w-4 h-4 sm:w-5 sm:h-5 shrink-0 transition-colors duration-200 ${
                             checked ? "text-emerald-500" : "text-slate-200"
                           }`}
                           aria-hidden="true"

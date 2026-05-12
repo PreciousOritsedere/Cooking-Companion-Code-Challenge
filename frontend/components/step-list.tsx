@@ -87,22 +87,22 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
               key={step.step_number}
               ref={isActive ? activeRef : undefined}
               className={`
-                relative rounded-2xl px-5 py-4 transition-all duration-300
+                relative rounded-2xl px-4 py-3 sm:px-5 sm:py-4 border-2 transition-all duration-300
                 ${isActive
-                  ? "bg-brand-light ring-2 ring-brand-cyan shadow-sm"
+                  ? "bg-brand-light border-brand-cyan shadow-sm"
                   : isDone
-                    ? "bg-emerald-50/50"
-                    : "bg-white"
+                    ? "bg-emerald-50/50 border-emerald-100"
+                    : "bg-white border-transparent"
                 }
               `}
               aria-current={isActive ? "step" : undefined}
               aria-label={`Step ${step.step_number}: ${statusLabel}`}
             >
-              <div className="flex gap-4">
+              <div className="flex gap-3 sm:gap-4">
                 <div
                   className={`
-                    w-8 h-8 rounded-full flex items-center justify-center shrink-0
-                    text-sm font-bold transition-colors duration-300
+                    w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0
+                    text-xs sm:text-sm font-bold transition-colors duration-300
                     ${isActive
                       ? "bg-brand-blue text-white"
                       : isDone
@@ -121,7 +121,7 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
 
                 <div className="flex-1 min-w-0">
                   <p
-                    className={`text-base leading-relaxed transition-colors duration-300 ${
+                    className={`text-sm sm:text-base leading-relaxed transition-colors duration-300 ${
                       isDone
                         ? "text-slate-400"
                         : isActive
@@ -133,10 +133,10 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
                   </p>
 
                   {/* Meta row: timing, attention */}
-                  <div className="flex flex-wrap items-center gap-3 mt-2">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1.5 sm:mt-2">
                     {step.duration_minutes != null && (
                       <span
-                        className="inline-flex items-center gap-1 text-sm text-slate-500"
+                        className="inline-flex items-center gap-1 text-xs sm:text-sm text-slate-500"
                         aria-label={`Duration: ${step.duration_minutes} minutes`}
                       >
                         <ClockIcon className="w-4 h-4" aria-hidden="true" />

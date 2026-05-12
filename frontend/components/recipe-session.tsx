@@ -75,9 +75,9 @@ function RecipeSessionInner({ uploadData, onReset }: RecipeSessionProps) {
           className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-sm px-5 py-3"
           aria-label="Session controls"
         >
-          <h1 className="text-lg font-semibold text-brand truncate">
-            {state?.recipe?.title ?? "Cooking Companion"}
-          </h1>
+          <span className="text-lg font-semibold text-brand truncate">
+            Cooking Companion
+          </span>
           <button
             type="button"
             onClick={onReset}

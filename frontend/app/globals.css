@@ -96,6 +96,18 @@ body {
   --copilot-kit-background-color: var(--background) !important;
 }
 
+/* Limit popup height on mobile so it doesn't cover the full screen */
+@media (max-width: 640px) {
+  .copilotKitWindow.open {
+    max-height: 55vh !important;
+    height: 55vh !important;
+    top: auto !important;
+    bottom: 60px !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+  }
+}
+
 /* Focus ring consistency */
 :focus-visible {
   outline: 2px solid var(--brand-blue);
