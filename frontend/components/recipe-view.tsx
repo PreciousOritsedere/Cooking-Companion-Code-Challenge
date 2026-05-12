@@ -30,7 +30,7 @@ export function RecipeView({ state }: RecipeViewProps) {
 
   const handleSwap = useCallback((ingredientName: string) => {
     setOpen(true);
-    submitToCopilotChat(`Suggest a substitute for ${ingredientName}`);
+    submitToCopilotChat(`Substitute ${ingredientName} with `, false);
   }, [setOpen]);
 
   const handleStartCooking = useCallback(() => {
