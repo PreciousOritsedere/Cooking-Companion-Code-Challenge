@@ -84,6 +84,29 @@ OpenAPI at http://localhost:8000/docs.
 
 For state model, CopilotKit wiring and the agent's tools: [backend/README.md](backend/README.md).
 
+### 3. Run the frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) (backend must be running on port 8000).
+
+Full architecture, features, and design decisions: [frontend/README.md](frontend/README.md).
+
+### Full stack (Docker)
+
+```bash
+cp .env.example .env
+# Edit .env — set GEMINI_API_KEY or OPENAI_API_KEY (no quotes)
+docker compose build
+docker compose up
+```
+
+Backend on `:8000`, frontend on `:3000`.
+
 ## Tips
 
 - Start with the walking skeleton: upload → chat → show recipe. Then iterate.
