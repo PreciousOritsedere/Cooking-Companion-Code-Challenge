@@ -12,49 +12,7 @@
 import { useCallback, useState } from "react";
 import { MicrophoneIcon } from "@heroicons/react/24/solid";
 import { useVoiceInput } from "@/hooks/use-voice-input";
-
-/**
- * Finds the CopilotKit chat textarea and submits a message by
- * programmatically setting its value and dispatching events.
- */
-function submitToCopilotChat(text: string): boolean {
-  const textarea = document.querySelector(
-    'textarea[placeholder*="Ask me anything"]'
-  ) as HTMLTextAreaElement | null;
-
-  if (!textarea) return false;
-
-  // Set the value using the native setter to trigger React's onChange
-  const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-    window.HTMLTextAreaElement.prototype,
-    "value"
-  )?.set;
-
-  if (!nativeInputValueSetter) return false;
-
-  nativeInputValueSetter.call(textarea, text);
-  textarea.dispatchEvent(new Event("input", { bubbles: true }));
-
-  // Wait for React to process the input, then submit
-  setTimeout(() => {
-    const form = textarea.closest("form");
-    if (form) {
-      form.requestSubmit();
-    } else {
-      // Fallback: press Enter
-      textarea.dispatchEvent(
-        new KeyboardEvent("keydown", {
-          key: "Enter",
-          code: "Enter",
-          keyCode: 13,
-          bubbles: true,
-        })
-      );
-    }
-  }, 50);
-
-  return true;
-}
+import { submitToCopilotChat } from "@/lib/chat-utils";
 
 export function VoiceButton() {
   const [error, setError] = useState<string | null>(null);

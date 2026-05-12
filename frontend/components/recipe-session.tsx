@@ -59,44 +59,43 @@ function RecipeSessionInner({ uploadData, onReset }: RecipeSessionProps) {
   const isLoading = !state || !state.recipe;
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden animate-fade-in">
-      {/* Top bar with recipe name and reset */}
-      <nav
-        className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-sm px-5 py-3"
-        aria-label="Session controls"
-      >
-        <h1 className="text-lg font-semibold text-brand truncate">
-          {state?.recipe?.title ?? "Cooking Companion"}
-        </h1>
-        <button
-          type="button"
-          onClick={onReset}
-          className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-500 hover:text-brand hover:bg-slate-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50"
-          aria-label="Upload a new recipe"
+    <CopilotSidebar
+      defaultOpen={true}
+      clickOutsideToClose={false}
+      labels={{
+        title: "Cooking Assistant",
+        initial:
+          "Hi! I can help you scale the recipe, swap ingredients, or guide you through the steps. What would you like to do?",
+        placeholder: "Ask me anything about the recipe...",
+      }}
+    >
+      <div className="flex h-screen flex-col overflow-hidden animate-fade-in">
+        {/* Top bar with recipe name and reset */}
+        <nav
+          className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-sm px-5 py-3"
+          aria-label="Session controls"
         >
-          New recipe
-        </button>
-      </nav>
+          <h1 className="text-lg font-semibold text-brand truncate">
+            {state?.recipe?.title ?? "Cooking Companion"}
+          </h1>
+          <button
+            type="button"
+            onClick={onReset}
+            className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-500 hover:text-brand hover:bg-slate-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50"
+            aria-label="Upload a new recipe"
+          >
+            New recipe
+          </button>
+        </nav>
 
-      {/* Recipe content — fills available space */}
-      <main id="main-content" className="flex-1 overflow-hidden" aria-live="polite">
-        {isLoading ? <RecipeSkeleton /> : <RecipeView state={state} />}
-      </main>
+        {/* Recipe content — fills available space */}
+        <main id="main-content" className="flex-1 overflow-hidden" aria-live="polite">
+          {isLoading ? <RecipeSkeleton /> : <RecipeView state={state} />}
+        </main>
 
-      {/* Voice input — floating mic button for hands-free use */}
-      <VoiceButton />
-
-      {/* Chat sidebar — CopilotKit pre-built UI */}
-      <CopilotSidebar
-        defaultOpen={true}
-        clickOutsideToClose={false}
-        labels={{
-          title: "Cooking Assistant",
-          initial:
-            "Hi! I can help you scale the recipe, swap ingredients, or guide you through the steps. What would you like to do?",
-          placeholder: "Ask me anything about the recipe...",
-        }}
-      />
-    </div>
+        {/* Voice input — floating mic button for hands-free use */}
+        <VoiceButton />
+      </div>
+    </CopilotSidebar>
   );
 }

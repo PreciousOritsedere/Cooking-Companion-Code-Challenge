@@ -1,6 +1,9 @@
 "use client";
 
+import { useCallback } from "react";
 import type { RecipeContext } from "@/lib/types";
+import { submitToCopilotChat } from "@/lib/chat-utils";
+import { useChatContext } from "@copilotkit/react-ui";
 import { RecipeHeader } from "./recipe-header";
 import { IngredientList } from "./ingredient-list";
 import { StepList } from "./step-list";
@@ -20,6 +23,12 @@ interface RecipeViewProps {
  */
 export function RecipeView({ state }: RecipeViewProps) {
   const { recipe, current_step, checked_ingredients, cooking_started } = state;
+  const { setOpen } = useChatContext();
+
+  const handleSwap = useCallback((ingredientName: string) => {
+    setOpen(true);
+    submitToCopilotChat(`Suggest a substitute for ${ingredientName}`);
+  }, [setOpen]);
 
   if (!recipe) {
     return (
@@ -84,6 +93,7 @@ export function RecipeView({ state }: RecipeViewProps) {
           <IngredientList
             ingredients={recipe.ingredients}
             checkedIngredients={checked_ingredients}
+            onSwap={handleSwap}
           />
         </div>
         <div className="overflow-y-auto pl-0 lg:pl-2 pb-4">

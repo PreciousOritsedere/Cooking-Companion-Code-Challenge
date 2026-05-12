@@ -9,6 +9,7 @@ interface IngredientListProps {
   ingredients: Ingredient[];
   checkedIngredients: string[];
   onToggle?: (name: string) => void;
+  onSwap?: (ingredientName: string) => void;
 }
 
 const categoryLabels: Record<Ingredient["category"], string> = {
@@ -40,18 +41,18 @@ function formatQuantity(ing: Ingredient): string {
 
 /**
  * Ingredient checklist grouped by category.
- * Tap to check off items while prepping. Changed items get a brief highlight.
+ * Tap to check off items. "Swap" chip pre-fills a substitution prompt.
  */
 export function IngredientList({
   ingredients,
   checkedIngredients,
   onToggle,
+  onSwap,
 }: IngredientListProps) {
   const [localChecked, setLocalChecked] = useState<Set<string>>(
     new Set(checkedIngredients)
   );
 
-  // null on first render = skip detection, just record the baseline
   const prevIngredientsRef = useRef<Map<string, string> | null>(null);
   const [changedNames, setChangedNames] = useState<Set<string>>(new Set());
 
@@ -125,38 +126,58 @@ export function IngredientList({
                 const justChanged = changedNames.has(ing.name);
 
                 return (
-                  <li key={ing.name}>
-                    <button
-                      type="button"
-                      onClick={() => toggle(ing.name)}
-                      aria-pressed={checked}
-                      aria-label={`${checked ? "Uncheck" : "Check"} ${formatQuantity(ing)}`}
+                  <li key={ing.name} className="group">
+                    <div
                       className={`
-                        w-full flex items-center gap-3 rounded-xl px-4 py-3
-                        text-left text-base transition-all duration-300
-                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50
+                        flex items-center gap-2 rounded-xl transition-all duration-300
                         ${justChanged
                           ? "bg-brand-light ring-2 ring-brand-cyan scale-[1.01] shadow-sm"
                           : checked
-                            ? "bg-emerald-50 text-slate-400 line-through"
-                            : "bg-white border border-slate-100 hover:border-brand-cyan/40 hover:shadow-sm text-slate-700"
+                            ? "bg-emerald-50"
+                            : "bg-white border border-slate-100 hover:border-brand-cyan/40 hover:shadow-sm"
                         }
                       `}
                     >
-                      <CheckCircleIcon
-                        className={`w-5 h-5 shrink-0 transition-colors duration-200 ${
-                          checked ? "text-emerald-500" : "text-slate-200"
-                        }`}
-                        aria-hidden="true"
-                      />
-                      <span className="flex-1">{formatQuantity(ing)}</span>
-                      {justChanged && (
-                        <ArrowsRightLeftIcon
-                          className="w-4 h-4 text-brand-blue animate-pulse"
+                      <button
+                        type="button"
+                        onClick={() => toggle(ing.name)}
+                        aria-pressed={checked}
+                        aria-label={`${checked ? "Uncheck" : "Check"} ${formatQuantity(ing)}`}
+                        className="flex-1 flex items-center gap-3 px-4 py-3 text-left text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50 rounded-l-xl"
+                      >
+                        <CheckCircleIcon
+                          className={`w-5 h-5 shrink-0 transition-colors duration-200 ${
+                            checked ? "text-emerald-500" : "text-slate-200"
+                          }`}
                           aria-hidden="true"
                         />
+                        <span className={checked ? "text-slate-400 line-through" : "text-slate-700"}>
+                          {formatQuantity(ing)}
+                        </span>
+                        {justChanged && (
+                          <ArrowsRightLeftIcon
+                            className="w-4 h-4 text-brand-blue animate-pulse"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </button>
+
+                      {/* Swap chip — always visible on touch, hover-reveal on desktop */}
+                      {onSwap && !checked && (
+                        <button
+                          type="button"
+                          onPointerDown={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            onSwap(ing.name);
+                          }}
+                          aria-label={`Swap ${ing.name}`}
+                          className="swap-chip relative z-10 shrink-0 mr-2 px-2.5 py-1 rounded-lg text-xs font-medium text-brand-blue bg-brand-light/60 transition-opacity duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50 cursor-pointer"
+                        >
+                          Swap
+                        </button>
                       )}
-                    </button>
+                    </div>
                   </li>
                 );
               })}

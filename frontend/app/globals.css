@@ -96,15 +96,15 @@ body {
   --copilot-kit-background-color: var(--background) !important;
 }
 
-/* Make CopilotKit sidebar width responsive */
+/* Sidebar width constraints */
 @media (min-width: 1024px) {
-  [class*="copilotKitSidebar"] {
+  .copilotKitSidebar {
     max-width: 380px;
   }
 }
 
 @media (max-width: 640px) {
-  [class*="copilotKitSidebar"] {
+  .copilotKitSidebar {
     width: 100% !important;
     max-width: 100% !important;
   }
@@ -121,4 +121,20 @@ body {
 button:focus-visible,
 [role="button"]:focus-visible {
   outline: none;
+}
+
+/* Swap chip visibility: always visible on touch, hover-reveal on pointer */
+@media (hover: hover) {
+  .swap-chip {
+    opacity: 0;
+  }
+  .group:hover .swap-chip,
+  .swap-chip:focus {
+    opacity: 1;
+  }
+}
+@media (hover: none) {
+  .swap-chip {
+    opacity: 1;
+  }
 }
