@@ -8,6 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { CheckIcon, PlayIcon } from "@heroicons/react/24/solid";
 import { useEffect, useRef } from "react";
+import { StepTimer } from "./step-timer";
 
 interface StepListProps {
   steps: RecipeStep[];
@@ -177,6 +178,14 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
                         ))}
                       </ul>
                     </aside>
+                  )}
+
+                  {/* Countdown timer — only on active step with a duration */}
+                  {isActive && step.duration_minutes != null && (
+                    <StepTimer
+                      durationMinutes={step.duration_minutes}
+                      stepNumber={step.step_number}
+                    />
                   )}
                 </div>
               </div>
