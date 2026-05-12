@@ -1,15 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf9f7;
-  --foreground: #1c1917;
-  --accent: #f59e0b;
-  --accent-light: #fef3c7;
+  --background: #f8fafc;
+  --foreground: #1B3A6B;
+  --brand-navy: #1B3A6B;
+  --brand-blue: #2E6EB5;
+  --brand-cyan: #4BAFDF;
+  --brand-pink: #E91E7B;
+  --brand-light: #e8f4fd;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brand: var(--brand-navy);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-cyan: var(--brand-cyan);
+  --color-brand-pink: var(--brand-pink);
+  --color-brand-light: var(--brand-light);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -26,7 +34,7 @@ body {
 
 /* Custom selection colour to match theme */
 ::selection {
-  background: var(--accent-light);
+  background: var(--brand-light);
   color: var(--foreground);
 }
 
@@ -39,11 +47,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d6d3d1;
+  background: #c5d5e8;
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a29e;
+  background: #8ba8c8;
 }
 
 /* Page transition animation */
@@ -82,10 +90,10 @@ body {
 .delay-200 { animation-delay: 200ms; }
 .delay-300 { animation-delay: 300ms; }
 
-/* CopilotKit sidebar overrides — match our warm theme */
+/* CopilotKit sidebar overrides — Indegene brand theme */
 .copilotKitSidebar {
-  --copilot-kit-primary-color: #f59e0b !important;
-  --copilot-kit-background-color: #faf9f7 !important;
+  --copilot-kit-primary-color: var(--brand-blue) !important;
+  --copilot-kit-background-color: var(--background) !important;
 }
 
 /* Make CopilotKit sidebar width responsive */
@@ -104,7 +112,7 @@ body {
 
 /* Focus ring consistency */
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--brand-blue);
   outline-offset: 2px;
   border-radius: 4px;
 }

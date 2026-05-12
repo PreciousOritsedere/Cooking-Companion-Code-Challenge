@@ -114,24 +114,24 @@ export function UploadZone({ onUploadComplete }: UploadZoneProps) {
         className={`
           relative w-full rounded-2xl border-2 border-dashed p-12
           transition-all duration-300 ease-out
-          focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-amber-500/50
+          focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-brand-blue/50
           ${state === "dragging"
-            ? "border-amber-500 bg-amber-50 scale-[1.02]"
+            ? "border-brand-blue bg-brand-light scale-[1.02]"
             : state === "uploading"
-              ? "border-stone-300 bg-stone-50 cursor-wait"
+              ? "border-slate-300 bg-slate-50 cursor-wait"
               : state === "error"
                 ? "border-red-300 bg-red-50 cursor-pointer"
-                : "border-stone-300 bg-white hover:border-amber-400 hover:bg-amber-50/30 cursor-pointer"
+                : "border-slate-300 bg-white hover:border-brand-cyan hover:bg-brand-light/30 cursor-pointer"
           }
         `}
       >
         {state === "uploading" ? (
           <div className="flex flex-col items-center gap-4" role="status">
             <div
-              className="w-10 h-10 border-3 border-amber-500 border-t-transparent rounded-full animate-spin"
+              className="w-10 h-10 border-3 border-brand-blue border-t-transparent rounded-full animate-spin"
               aria-hidden="true"
             />
-            <p className="text-lg font-medium text-stone-600">
+            <p className="text-lg font-medium text-slate-600">
               Parsing your recipe...
             </p>
             <span className="sr-only">Uploading and parsing recipe file</span>
@@ -139,16 +139,16 @@ export function UploadZone({ onUploadComplete }: UploadZoneProps) {
         ) : (
           <div className="flex flex-col items-center gap-4">
             <div
-              className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center"
+              className="w-16 h-16 rounded-full bg-brand-light flex items-center justify-center"
               aria-hidden="true"
             >
-              <ArrowUpTrayIcon className="w-8 h-8 text-amber-600" />
+              <ArrowUpTrayIcon className="w-8 h-8 text-brand-blue" />
             </div>
             <div className="text-center">
-              <p className="text-lg font-medium text-stone-700">
+              <p className="text-lg font-medium text-brand">
                 Drop your recipe here
               </p>
-              <p className="mt-1 text-sm text-stone-500">
+              <p className="mt-1 text-sm text-slate-500">
                 PDF or text file — tap to browse
               </p>
             </div>

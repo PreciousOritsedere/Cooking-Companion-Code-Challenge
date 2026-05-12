@@ -62,16 +62,16 @@ function RecipeSessionInner({ uploadData, onReset }: RecipeSessionProps) {
     <div className="flex min-h-screen flex-col animate-fade-in">
       {/* Top bar with recipe name and reset */}
       <nav
-        className="sticky top-0 z-10 flex items-center justify-between border-b border-stone-200 bg-white/80 backdrop-blur-sm px-5 py-3"
+        className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-sm px-5 py-3"
         aria-label="Session controls"
       >
-        <h1 className="text-lg font-semibold text-stone-800 truncate">
+        <h1 className="text-lg font-semibold text-brand truncate">
           {state?.recipe?.title ?? "Cooking Companion"}
         </h1>
         <button
           type="button"
           onClick={onReset}
-          className="rounded-lg px-3 py-1.5 text-sm font-medium text-stone-500 hover:text-stone-700 hover:bg-stone-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+          className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-500 hover:text-brand hover:bg-slate-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50"
           aria-label="Upload a new recipe"
         >
           New recipe

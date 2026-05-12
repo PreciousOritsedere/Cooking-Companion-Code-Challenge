@@ -39,12 +39,8 @@ function formatQuantity(ing: Ingredient): string {
 }
 
 /**
- * Groups ingredients by category, rendering each group with a heading.
- * Each ingredient is a large tappable row — designed for messy hands
- * ticking off items while prepping.
- *
- * Highlights recently changed ingredients (e.g. after scaling or substitution)
- * with a brief amber flash animation.
+ * Ingredient checklist grouped by category.
+ * Tap to check off items while prepping. Changed items get a brief highlight.
  */
 export function IngredientList({
   ingredients,
@@ -55,53 +51,42 @@ export function IngredientList({
     new Set(checkedIngredients)
   );
 
-  // Tracks which ingredients changed so we can highlight them
-  const prevIngredientsRef = useRef<Map<string, string>>(new Map());
+  // null on first render = skip detection, just record the baseline
+  const prevIngredientsRef = useRef<Map<string, string> | null>(null);
   const [changedNames, setChangedNames] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    const nextMap = new Map<string, string>();
+    for (const ing of ingredients) {
+      nextMap.set(ing.name, formatQuantity(ing));
+    }
+
+    if (prevIngredientsRef.current === null) {
+      prevIngredientsRef.current = nextMap;
+      return;
+    }
+
     const prev = prevIngredientsRef.current;
     const newChanged = new Set<string>();
 
     for (const ing of ingredients) {
       const prevStr = prev.get(ing.name);
       const currStr = formatQuantity(ing);
-
-      // Detect new or changed ingredients
       if (prevStr !== undefined && prevStr !== currStr) {
         newChanged.add(ing.name);
       }
-    }
-
-    // Detect ingredients that didn't exist before (substitution result)
-    const prevNames = new Set(prev.keys());
-    for (const ing of ingredients) {
-      if (!prevNames.has(ing.name)) {
+      if (!prev.has(ing.name)) {
         newChanged.add(ing.name);
       }
     }
+
+    prevIngredientsRef.current = nextMap;
 
     if (newChanged.size > 0) {
       setChangedNames(newChanged);
       const timer = setTimeout(() => setChangedNames(new Set()), 2000);
       return () => clearTimeout(timer);
     }
-
-    // Update the ref for next comparison
-    const nextMap = new Map<string, string>();
-    for (const ing of ingredients) {
-      nextMap.set(ing.name, formatQuantity(ing));
-    }
-    prevIngredientsRef.current = nextMap;
-  }, [ingredients]);
-
-  // Also update ref when there's no change detected
-  useEffect(() => {
-    const nextMap = new Map<string, string>();
-    for (const ing of ingredients) {
-      nextMap.set(ing.name, formatQuantity(ing));
-    }
-    prevIngredientsRef.current = nextMap;
   }, [ingredients]);
 
   const toggle = (name: string) => {
@@ -123,18 +108,18 @@ export function IngredientList({
 
   return (
     <section aria-label="Ingredients">
-      <h2 className="text-xl font-semibold text-stone-800 mb-4">
+      <h2 className="text-xl font-semibold text-brand mb-4">
         Ingredients
       </h2>
 
       <div className="space-y-5">
         {grouped.map(({ category, items }) => (
           <div key={category}>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-stone-400 mb-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 pl-1">
               {categoryLabels[category]}
             </h3>
 
-            <ul className="space-y-1">
+            <ul className="space-y-1.5">
               {items.map((ing) => {
                 const checked = localChecked.has(ing.name);
                 const justChanged = changedNames.has(ing.name);
@@ -149,25 +134,25 @@ export function IngredientList({
                       className={`
                         w-full flex items-center gap-3 rounded-xl px-4 py-3
                         text-left text-base transition-all duration-300
-                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50
                         ${justChanged
-                          ? "bg-amber-100 ring-2 ring-amber-400 scale-[1.02]"
+                          ? "bg-brand-light ring-2 ring-brand-cyan scale-[1.01] shadow-sm"
                           : checked
-                            ? "bg-emerald-50 text-stone-400 line-through"
-                            : "bg-white hover:bg-stone-50 text-stone-700"
+                            ? "bg-emerald-50 text-slate-400 line-through"
+                            : "bg-white border border-slate-100 hover:border-brand-cyan/40 hover:shadow-sm text-slate-700"
                         }
                       `}
                     >
                       <CheckCircleIcon
-                        className={`w-6 h-6 shrink-0 transition-colors duration-150 ${
-                          checked ? "text-emerald-500" : "text-stone-200"
+                        className={`w-5 h-5 shrink-0 transition-colors duration-200 ${
+                          checked ? "text-emerald-500" : "text-slate-200"
                         }`}
                         aria-hidden="true"
                       />
                       <span className="flex-1">{formatQuantity(ing)}</span>
                       {justChanged && (
                         <ArrowsRightLeftIcon
-                          className="w-4 h-4 text-amber-600 animate-pulse"
+                          className="w-4 h-4 text-brand-blue animate-pulse"
                           aria-hidden="true"
                         />
                       )}

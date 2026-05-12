@@ -46,7 +46,7 @@ export function RecipeView({ state }: RecipeViewProps) {
           className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm ${
             current_step >= recipe.steps.length - 1
               ? "bg-emerald-50 border-emerald-200 text-emerald-800"
-              : "bg-amber-50 border-amber-200 text-amber-800"
+              : "bg-brand-light border-brand-cyan/30 text-brand"
           }`}
           role="status"
           aria-live="polite"
@@ -55,7 +55,7 @@ export function RecipeView({ state }: RecipeViewProps) {
             className={`w-5 h-5 ${
               current_step >= recipe.steps.length - 1
                 ? "text-emerald-500"
-                : "text-amber-500 animate-pulse"
+                : "text-brand-blue animate-pulse"
             }`}
             aria-hidden="true"
           />
@@ -68,7 +68,7 @@ export function RecipeView({ state }: RecipeViewProps) {
               <span className="font-medium">
                 Cooking mode — step {current_step + 1} of {recipe.steps.length}
               </span>
-              <span className="text-amber-600 ml-1">
+              <span className="text-brand-blue ml-1">
                 Ask the assistant to move to the next step when you're ready.
               </span>
             </>

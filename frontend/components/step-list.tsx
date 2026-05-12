@@ -24,7 +24,6 @@ interface StepListProps {
 export function StepList({ steps, currentStep, cookingStarted }: StepListProps) {
   const activeRef = useRef<HTMLLIElement>(null);
 
-  // Auto-scroll to the active step when it changes
   useEffect(() => {
     if (cookingStarted && activeRef.current) {
       activeRef.current.scrollIntoView({
@@ -34,10 +33,6 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
     }
   }, [currentStep, cookingStarted]);
 
-  // The backend can't set currentStep beyond steps.length - 1,
-  // so "all done" means we're on the last step and the agent confirmed completion.
-  // We track this: once the user reaches the last step, we show it as the final active step.
-  // When currentStep equals the last index, the progress bar shows full.
   const isOnLastStep = cookingStarted && currentStep === steps.length - 1;
   const allDone = cookingStarted && currentStep >= steps.length;
   const progress = cookingStarted
@@ -47,17 +42,17 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
   return (
     <section aria-label="Cooking steps">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-stone-800">Steps</h2>
+        <h2 className="text-xl font-semibold text-brand">Steps</h2>
 
         {/* Progress indicator — visible once cooking starts */}
         {cookingStarted && (
           <div className="flex items-center gap-3" role="status" aria-label={`Cooking progress: ${progress}%`}>
-            <span className="text-sm font-medium text-stone-500">
+            <span className="text-sm font-medium text-slate-500">
               {isOnLastStep ? steps.length : currentStep}/{steps.length}
             </span>
-            <div className="w-24 h-2 rounded-full bg-stone-200 overflow-hidden">
+            <div className="w-24 h-2 rounded-full bg-slate-200 overflow-hidden">
               <div
-                className="h-full rounded-full bg-amber-500 transition-all duration-500 ease-out"
+                className="h-full rounded-full bg-brand-blue transition-all duration-500 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -93,7 +88,7 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
               className={`
                 relative rounded-2xl px-5 py-4 transition-all duration-300
                 ${isActive
-                  ? "bg-amber-50 ring-2 ring-amber-400 shadow-sm"
+                  ? "bg-brand-light ring-2 ring-brand-cyan shadow-sm"
                   : isDone
                     ? "bg-emerald-50/50"
                     : "bg-white"
@@ -103,16 +98,15 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
               aria-label={`Step ${step.step_number}: ${statusLabel}`}
             >
               <div className="flex gap-4">
-                {/* Step number badge */}
                 <div
                   className={`
                     w-8 h-8 rounded-full flex items-center justify-center shrink-0
                     text-sm font-bold transition-colors duration-300
                     ${isActive
-                      ? "bg-amber-500 text-white"
+                      ? "bg-brand-blue text-white"
                       : isDone
                         ? "bg-emerald-500 text-white"
-                        : "bg-stone-200 text-stone-500"
+                        : "bg-slate-200 text-slate-500"
                     }
                   `}
                   aria-hidden="true"
@@ -128,10 +122,10 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
                   <p
                     className={`text-base leading-relaxed transition-colors duration-300 ${
                       isDone
-                        ? "text-stone-400"
+                        ? "text-slate-400"
                         : isActive
-                          ? "text-stone-900 font-medium"
-                          : "text-stone-700"
+                          ? "text-brand font-medium"
+                          : "text-slate-700"
                     }`}
                   >
                     {step.instruction}
@@ -141,7 +135,7 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
                   <div className="flex flex-wrap items-center gap-3 mt-2">
                     {step.duration_minutes != null && (
                       <span
-                        className="inline-flex items-center gap-1 text-sm text-stone-500"
+                        className="inline-flex items-center gap-1 text-sm text-slate-500"
                         aria-label={`Duration: ${step.duration_minutes} minutes`}
                       >
                         <ClockIcon className="w-4 h-4" aria-hidden="true" />
@@ -151,7 +145,7 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
 
                     {step.timer_label && isActive && (
                       <span
-                        className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-700"
+                        className="inline-flex items-center gap-1 rounded-full bg-brand-light px-3 py-1 text-sm font-medium text-brand"
                         role="status"
                         aria-label={`Timer: ${step.timer_label}`}
                       >
@@ -161,24 +155,23 @@ export function StepList({ steps, currentStep, cookingStarted }: StepListProps) 
                     )}
 
                     {step.requires_attention && (
-                      <span className="inline-flex items-center gap-1 text-sm text-orange-600" role="alert">
+                      <span className="inline-flex items-center gap-1 text-sm text-brand-pink" role="alert">
                         <ExclamationTriangleIcon className="w-4 h-4" aria-hidden="true" />
                         <span>Needs attention</span>
                       </span>
                     )}
                   </div>
 
-                  {/* Tips — only shown on active step to reduce clutter */}
                   {isActive && step.tips.length > 0 && (
                     <aside
-                      className="mt-3 flex items-start gap-2 rounded-lg bg-amber-100/50 p-3"
+                      className="mt-3 flex items-start gap-2 rounded-lg bg-brand-light/60 p-3"
                       aria-label="Tips for this step"
                     >
                       <LightBulbIcon
-                        className="w-5 h-5 text-amber-600 shrink-0 mt-0.5"
+                        className="w-5 h-5 text-brand-blue shrink-0 mt-0.5"
                         aria-hidden="true"
                       />
-                      <ul className="text-sm text-amber-800 space-y-1">
+                      <ul className="text-sm text-brand space-y-1">
                         {step.tips.map((tip, i) => (
                           <li key={i}>{tip}</li>
                         ))}

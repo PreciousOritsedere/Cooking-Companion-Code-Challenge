@@ -38,22 +38,22 @@ export class ErrorBoundary extends Component<Props, State> {
           <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
             <ExclamationCircleIcon className="w-8 h-8 text-red-500" />
           </div>
-          <h2 className="text-xl font-semibold text-stone-800">
+          <h2 className="text-xl font-semibold text-brand">
             Something went wrong
           </h2>
-          <p className="text-stone-500 max-w-md">
+          <p className="text-slate-500 max-w-md">
             {this.props.fallbackMessage ??
               "An unexpected error occurred. Try refreshing the page or uploading a new recipe."}
           </p>
           {this.state.error && (
-            <pre className="mt-2 text-xs text-stone-400 bg-stone-100 rounded-lg px-4 py-2 max-w-lg overflow-auto">
+            <pre className="mt-2 text-xs text-slate-400 bg-slate-100 rounded-lg px-4 py-2 max-w-lg overflow-auto">
               {this.state.error.message}
             </pre>
           )}
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="mt-4 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-amber-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+            className="mt-4 rounded-lg bg-brand-blue px-5 py-2.5 text-sm font-medium text-white hover:bg-brand transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/50"
           >
             Refresh page
           </button>

@@ -94,7 +94,7 @@ export function VoiceButton() {
       {/* Listening indicator */}
       {isListening && (
         <div
-          className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700 shadow-sm"
+          className="rounded-full bg-brand-light px-3 py-1 text-xs font-medium text-brand shadow-sm"
           role="status"
           aria-live="polite"
         >
@@ -111,10 +111,10 @@ export function VoiceButton() {
         className={`
           w-14 h-14 rounded-full flex items-center justify-center
           shadow-lg transition-all duration-200
-          focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-amber-500/50
+          focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-brand-blue/50
           ${isListening
-            ? "bg-red-500 hover:bg-red-600 scale-110 animate-pulse"
-            : "bg-amber-500 hover:bg-amber-600"
+            ? "bg-brand-pink hover:bg-brand-pink/90 scale-110 animate-pulse"
+            : "bg-brand-blue hover:bg-brand"
           }
         `}
       >
