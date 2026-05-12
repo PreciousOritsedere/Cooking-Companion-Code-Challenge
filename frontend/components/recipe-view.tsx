@@ -1,13 +1,15 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import type { RecipeContext } from "@/lib/types";
 import { submitToCopilotChat } from "@/lib/chat-utils";
 import { useChatContext } from "@copilotkit/react-ui";
+import { useSwipe } from "@/hooks/use-swipe";
 import { RecipeHeader } from "./recipe-header";
 import { IngredientList } from "./ingredient-list";
 import { StepList } from "./step-list";
 import { Confetti } from "./confetti";
+import { GestureHint } from "./gesture-hint";
 import { FireIcon } from "@heroicons/react/24/solid";
 
 interface RecipeViewProps {
@@ -30,6 +32,24 @@ export function RecipeView({ state }: RecipeViewProps) {
     setOpen(true);
     submitToCopilotChat(`Suggest a substitute for ${ingredientName}`);
   }, [setOpen]);
+
+  const handleSwipeLeft = useCallback(() => {
+    if (!cooking_started) return;
+    setOpen(true);
+    submitToCopilotChat("Move to the next step");
+  }, [cooking_started, setOpen]);
+
+  const handleSwipeRight = useCallback(() => {
+    if (!cooking_started || current_step === 0) return;
+    setOpen(true);
+    submitToCopilotChat("Go back to the previous step");
+  }, [cooking_started, current_step, setOpen]);
+
+  const swipeRef = useRef<HTMLDivElement>(null);
+  useSwipe(swipeRef, {
+    onSwipeLeft: handleSwipeLeft,
+    onSwipeRight: handleSwipeRight,
+  });
 
   if (!recipe) {
     return (
@@ -92,7 +112,10 @@ export function RecipeView({ state }: RecipeViewProps) {
       </div>
 
       {/* Scrollable body — two columns on lg, stacked on mobile */}
-      <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[minmax(280px,1fr)_2fr] gap-0 lg:gap-6 px-5 sm:px-6 lg:px-8 pb-6">
+      <div
+        ref={swipeRef}
+        className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[minmax(280px,1fr)_2fr] gap-0 lg:gap-6 px-5 sm:px-6 lg:px-8 pb-6"
+      >
         <div className="overflow-y-auto pr-2 pb-4 lg:border-r lg:border-slate-100">
           <IngredientList
             ingredients={recipe.ingredients}
@@ -108,6 +131,8 @@ export function RecipeView({ state }: RecipeViewProps) {
           />
         </div>
       </div>
+
+      {cooking_started && <GestureHint />}
     </article>
   );
 }
