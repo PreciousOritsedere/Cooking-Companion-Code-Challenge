@@ -7,6 +7,7 @@ import { useChatContext } from "@copilotkit/react-ui";
 import { RecipeHeader } from "./recipe-header";
 import { IngredientList } from "./ingredient-list";
 import { StepList } from "./step-list";
+import { Confetti } from "./confetti";
 import { FireIcon } from "@heroicons/react/24/solid";
 
 interface RecipeViewProps {
@@ -42,11 +43,14 @@ export function RecipeView({ state }: RecipeViewProps) {
     );
   }
 
+  const isComplete = cooking_started && current_step >= recipe.steps.length - 1;
+
   return (
     <article
       className="h-full flex flex-col overflow-hidden"
       aria-label={`Recipe: ${recipe.title}`}
     >
+      <Confetti active={isComplete} />
       {/* Fixed header area — doesn't scroll */}
       <div className="shrink-0 p-5 sm:p-6 lg:px-8 lg:pt-6 lg:pb-4 space-y-4">
         {cooking_started && (
