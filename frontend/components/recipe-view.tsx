@@ -11,14 +11,12 @@ interface RecipeViewProps {
 }
 
 /**
- * Main recipe display — the left/top panel in the app layout.
+ * Main recipe display — fills available viewport height.
  *
- * Layout strategy:
- * - On tablets/desktop (md+): single scrollable column inside the left panel.
- *   Ingredients and steps sit side by side when there's room (lg+).
- * - On phones: stacked vertically, full width.
- *
- * Shows a "cooking mode" banner once the user starts stepping through.
+ * Layout:
+ * - Header + cooking banner: fixed at top (no scroll)
+ * - Two-column body: ingredients and steps scroll independently
+ * - On phones: stacks vertically with single scroll
  */
 export function RecipeView({ state }: RecipeViewProps) {
   const { recipe, current_step, checked_ingredients, cooking_started } = state;
@@ -30,70 +28,71 @@ export function RecipeView({ state }: RecipeViewProps) {
         role="status"
         aria-label="No recipe loaded"
       >
-        <p className="text-stone-400 text-lg">No recipe loaded yet.</p>
+        <p className="text-slate-400 text-lg">No recipe loaded yet.</p>
       </div>
     );
   }
 
   return (
     <article
-      className="h-full overflow-y-auto p-5 sm:p-6 lg:p-8 space-y-6"
+      className="h-full flex flex-col overflow-hidden"
       aria-label={`Recipe: ${recipe.title}`}
     >
-      {/* Cooking mode indicator */}
-      {cooking_started && (
-        <div
-          className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm ${
-            current_step >= recipe.steps.length - 1
-              ? "bg-emerald-50 border-emerald-200 text-emerald-800"
-              : "bg-brand-light border-brand-cyan/30 text-brand"
-          }`}
-          role="status"
-          aria-live="polite"
-        >
-          <FireIcon
-            className={`w-5 h-5 ${
+      {/* Fixed header area — doesn't scroll */}
+      <div className="shrink-0 p-5 sm:p-6 lg:px-8 lg:pt-6 lg:pb-4 space-y-4">
+        {cooking_started && (
+          <div
+            className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm ${
               current_step >= recipe.steps.length - 1
-                ? "text-emerald-500"
-                : "text-brand-blue animate-pulse"
+                ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                : "bg-brand-light border-brand-cyan/30 text-brand"
             }`}
-            aria-hidden="true"
-          />
-          {current_step >= recipe.steps.length - 1 ? (
-            <span className="font-medium">
-              All done! Enjoy your meal.
-            </span>
-          ) : (
-            <>
+            role="status"
+            aria-live="polite"
+          >
+            <FireIcon
+              className={`w-5 h-5 ${
+                current_step >= recipe.steps.length - 1
+                  ? "text-emerald-500"
+                  : "text-brand-blue animate-pulse"
+              }`}
+              aria-hidden="true"
+            />
+            {current_step >= recipe.steps.length - 1 ? (
               <span className="font-medium">
-                Cooking mode — step {current_step + 1} of {recipe.steps.length}
+                All done! Enjoy your meal.
               </span>
-              <span className="text-brand-blue ml-1">
-                Ask the assistant to move to the next step when you're ready.
-              </span>
-            </>
-          )}
+            ) : (
+              <>
+                <span className="font-medium">
+                  Cooking mode — step {current_step + 1} of {recipe.steps.length}
+                </span>
+                <span className="text-brand-blue ml-1 hidden sm:inline">
+                  Ask the assistant to move to the next step when you're ready.
+                </span>
+              </>
+            )}
+          </div>
+        )}
+
+        <RecipeHeader recipe={recipe} />
+      </div>
+
+      {/* Scrollable body — two columns on lg, stacked on mobile */}
+      <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[minmax(280px,1fr)_2fr] gap-0 lg:gap-6 px-5 sm:px-6 lg:px-8 pb-6">
+        <div className="overflow-y-auto pr-2 pb-4 lg:border-r lg:border-slate-100">
+          <IngredientList
+            ingredients={recipe.ingredients}
+            checkedIngredients={checked_ingredients}
+          />
         </div>
-      )}
-
-      <RecipeHeader recipe={recipe} />
-
-      {/*
-        Two-column layout on large screens:
-        - Ingredients (narrower, fixed-ish) on the left
-        - Steps (wider, scrollable) on the right
-        Stacks on smaller screens.
-      */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(280px,1fr)_2fr] gap-6">
-        <IngredientList
-          ingredients={recipe.ingredients}
-          checkedIngredients={checked_ingredients}
-        />
-        <StepList
-          steps={recipe.steps}
-          currentStep={current_step}
-          cookingStarted={cooking_started}
-        />
+        <div className="overflow-y-auto pl-0 lg:pl-2 pb-4">
+          <StepList
+            steps={recipe.steps}
+            currentStep={current_step}
+            cookingStarted={cooking_started}
+          />
+        </div>
       </div>
     </article>
   );

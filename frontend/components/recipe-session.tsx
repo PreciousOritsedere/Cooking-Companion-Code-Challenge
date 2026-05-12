@@ -59,7 +59,7 @@ function RecipeSessionInner({ uploadData, onReset }: RecipeSessionProps) {
   const isLoading = !state || !state.recipe;
 
   return (
-    <div className="flex min-h-screen flex-col animate-fade-in">
+    <div className="flex h-screen flex-col overflow-hidden animate-fade-in">
       {/* Top bar with recipe name and reset */}
       <nav
         className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-sm px-5 py-3"
@@ -79,7 +79,7 @@ function RecipeSessionInner({ uploadData, onReset }: RecipeSessionProps) {
       </nav>
 
       {/* Recipe content — fills available space */}
-      <main id="main-content" className="flex-1" aria-live="polite">
+      <main id="main-content" className="flex-1 overflow-hidden" aria-live="polite">
         {isLoading ? <RecipeSkeleton /> : <RecipeView state={state} />}
       </main>
 
