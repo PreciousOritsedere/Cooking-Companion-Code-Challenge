@@ -16,13 +16,31 @@ The backend must be running on port 8000. See [backend/README.md](../backend/REA
 
 ## Full stack (Docker)
 
-From the repo root:
+`docker-compose.yml` expects a **repo root** `.env` (same as the original challenge layout). Create it before `docker compose up`:
 
 ```bash
-docker-compose up
+cp .env.example .env
+# Edit .env: set a real GEMINI_API_KEY or OPENAI_API_KEY (see backend/README.md — do not quote values)
 ```
 
-This starts both the backend (`:8000`) and frontend (`:3000`).
+The frontend image bakes `NEXT_PUBLIC_BACKEND_URL` at **build** time so API rewrites reach the `backend` service on the Compose network (not `localhost`). Rebuild the frontend after changing the Dockerfile or compose build args:
+
+```bash
+docker compose build --no-cache frontend
+docker compose up
+```
+
+This starts the backend (`:8000`) and frontend (`:3000`). Check the API with `curl http://localhost:8000/health`.
+
+If Compose reports that `.env` is missing, run `cp .env.example .env` from the repo root first.
+
+If the backend container exits immediately, check the logs: with `LLM_MODEL=gemini-*`, **both** `GOOGLE_API_KEY` and `GEMINI_API_KEY` are read by pydantic-ai (Google first). At least one must be a **non-empty** AI Studio key — lines like `GEMINI_API_KEY=` with nothing after `=` cause `ValueError: No API key was provided`. Do not put `#` inside the key value (the rest of the line becomes a comment). After editing `.env`, run `docker compose up` again (no rebuild needed for backend env changes).
+
+To confirm keys reach the backend (values redacted):
+
+```bash
+docker compose run --rm --no-deps backend sh -c 'test -n "$GEMINI_API_KEY" && echo GEMINI_API_KEY=set || echo GEMINI_API_KEY=empty; test -n "$GOOGLE_API_KEY" && echo GOOGLE_API_KEY=set || echo GOOGLE_API_KEY=empty'
+```
 
 ## Environment
 
@@ -65,7 +83,8 @@ frontend/
 │   └── use-swipe.ts          # Touch swipe gesture detection hook
 ├── lib/
 │   ├── types.ts              # TypeScript types mirroring backend models
-│   └── chat-utils.ts         # Programmatic chat submission utility
+│   ├── chat-utils.ts         # Programmatic chat submission utility
+│   └── upload-errors.ts      # Normalised upload failure messages (HTTP + network)
 └── types/
     └── speech.d.ts           # TypeScript declarations for Web Speech API
 ```
@@ -73,7 +92,7 @@ frontend/
 ## Features
 
 ### Core
-- **Recipe upload** — drag-and-drop or file picker; PDF and text supported.
+- **Recipe upload** — drag-and-drop or file picker; PDF and text supported. Handles offline detection, request timeouts (slow parsing), unreachable backend, HTTP errors (including FastAPI `detail` strings and validation arrays), and offers **Try again** / **Choose another file** after a failure.
 - **AI chat** — CopilotKit popup wired to the backend agent via AG-UI. Multi-turn, streaming.
 - **Live recipe view** — title, time, servings, difficulty, ingredients, steps. Updates in real time when the agent scales, substitutes, or advances steps.
 
@@ -110,6 +129,7 @@ frontend/
 | **Change highlight animations** | 2s flash when the agent modifies quantities or swaps ingredients. Glanceable feedback without interrupting flow. |
 | **Native touch events for swipe** | `PointerEvent` had reliability issues on scrollable containers. Native `touchstart`/`touchend` with `passive: true` listeners work consistently without blocking scroll. |
 | **DOM-based chat submission** | CopilotKit's programmatic message API is a premium feature. The `submitToCopilotChat` utility interacts with the controlled textarea via DOM to keep the open-source tier. |
+| **Upload error normalisation** | FastAPI returns `detail` as a string or a list of validation objects; the network can fail or hang. A small `upload-errors` helper plus offline listeners and an upload timeout keeps failures understandable and recoverable. |
 | **No external state library** | CopilotKit's `useCoAgent` handles shared state. Local UI state with `useState` where needed. No Redux, Zustand, or similar — keeps the dependency tree small. |
 | **Onboarding tour (react-joyride)** | A kitchen cook won't read a README. A 5-step spotlight tour teaches the key interactions on first use, then stays out of the way. |
 | **Error boundary + skeleton** | Resilient UX — never a blank screen. Skeleton shimmer during loading, boundary catches render crashes. |

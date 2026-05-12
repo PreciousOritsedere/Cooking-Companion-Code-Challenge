@@ -8,6 +8,10 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# Used at build time for rewrites and server bundles. In Compose this must be the
+# Docker service hostname, not localhost (see docker-compose.yml build.args).
+ARG NEXT_PUBLIC_BACKEND_URL=http://backend:8000
+ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
 RUN npm run build
 
 FROM node:20-alpine AS runner

@@ -38,9 +38,11 @@ export function useVoiceInput({
   useEffect(() => {
     if (!isSupported) return;
 
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
+    const Ctor =
+      window.SpeechRecognition ?? window.webkitSpeechRecognition;
+    if (!Ctor) return;
+
+    const recognition = new Ctor();
 
     recognition.continuous = false;
     recognition.interimResults = false;
